@@ -1,0 +1,6 @@
+# 生成产物（真实联调脚本输出的临时校验载荷）
+scripts/calc_payload.json
+
+# Python
+__pycache__/
+*.pyc
