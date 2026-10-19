@@ -2,11 +2,25 @@
 
 > 基于**麦当劳中国 MCP** 的多目标最优解点餐引擎 —— 一句话说出预算和营养目标，自动领券、比价、算最优组合。
 
+![GitHub stars](https://img.shields.io/github/stars/fresshman/mcd-saver-warroom?style=social)
+![MCP](https://img.shields.io/badge/MCP-麦当劳中国-blue)
+![Powered by](https://img.shields.io/badge/Powered%20by-WorkBuddy-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 「麦麦省钱作战室」是一个面向麦当劳点餐决策的 AI Skill。它把**真实优惠券 + 真实门店菜单 + 真实营养数据**
 喂给一个组合优化引擎，在预算与营养约束下求解**帕累托最优**的点餐方案，并用麦当劳官方的
 `calculate-price` 工具对方案做价格校验，最终给出可执行的「领券 + 下单」路径。
 
 本项目为「麦当劳程序员创意开发大赛」参赛作品，由参赛者独立开发，非麦当劳官方产品。
+
+## 🏆 参赛亮点（为什么不一样）
+
+榜单上多数作品停留在"列券 / 查菜单"，本作品的核心差异：
+
+- **真·决策闭环**：不是罗列优惠券，而是枚举餐品组合 → 叠加最优券 → 约束过滤 → 帕累托排序。
+- **真实多用 MCP**：串联**券池 / 菜单 / 营养 / 官方计价** 4 组共 9 个麦当劳 MCP 工具。
+- **价格权威校验**：以官方 `calculate-price` 为最终价格标尺，优化器估算与官方计价 **100% 一致**（见下方真实联调）。
+- **离线可验证**：核心引擎为纯标准库 Python，无需联网即可跑 `--demo`，降低评审与复现门槛。
 
 ## ✨ 核心能力
 
@@ -20,6 +34,19 @@
 
 与「只列券」类方案的本质区别：**真的在做组合优化**（枚举候选篮 → 应用最优券叠加 → 约束过滤 → 帕累托排序），
 且以官方 `calculate-price` 为最终价格权威。
+
+## 🔧 工作流程
+
+```mermaid
+flowchart TD
+    U["用户目标<br/>预算 / 营养 / 偏好"] --> ENG["组合优化引擎<br/>saver_engine.py"]
+    MCP1["query-my-coupons<br/>query-store-coupons<br/>available-coupons"] --> ENG
+    MCP2["query-meals<br/>门店真实菜单"] --> ENG
+    MCP3["list-nutrition-foods<br/>官方营养库"] --> ENG
+    ENG -->|候选方案| CALC["calculate-price<br/>官方计价校验"]
+    CALC -->|实付金额| OUT["方案卡<br/>商品 / 优惠 / 热量 / 蛋白"]
+    OUT --> ORDER["领券 + 下单路径"]
+```
 
 ## 📦 安装方法
 
